@@ -54,6 +54,10 @@ body {
     animation: redFlash 0.6s infinite;
     border: 2px solid red;
     }
+
+    .flash-red {
+        animation: redFlash 0.4s infinite;
+      }
     
     @keyframes redFlash {
     0% { box-shadow: 0 0 5px red; }

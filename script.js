@@ -45,7 +45,7 @@ const phase2Terminal = document.getElementById('phase2-terminal');
 const phase2Output = document.getElementById('terminal-output');
 const phase2Close = document.getElementById('phase2-terminal-close');
 
-let screen3Unlocked = false;
+let screen3Unlocked = true; //testing purposs
 let screen3Connected = false;
 let screen3Flashing = false;
 
@@ -292,6 +292,7 @@ function startFirstMessage() {
   screen3.classList.add('incoming-flash');
   screen3Flashing = true;
   screen3Unlocked = true;
+  triggerBishop();
 }
 
 function generateBanditoName(name) {
@@ -340,7 +341,7 @@ screen3.addEventListener('click', () => {
     ];
 
     const letter = `
-Dear Bandito,
+${currentBanditoName},
 
 Time tHey come wandering through the shadows, seeking what the night conceals.
 Every trail you follow may hide a secret, but only those who look closely will see.
@@ -348,9 +349,11 @@ The whispers in the wind tell stories, some false, some true.
 Keep your eyes open, your mind sharper than the sharpest edge.
 Remember: sometimes guidance is not given by stars, but by what is hidden in plain sight.
 
-Trust this well,
-~Clancy
-`;
+Trust this well.
+
+Always,
+- Clancy
+    `;
 
     const answer = "THE COMPASS LIES";
     let htmlLetter = '';
@@ -386,7 +389,7 @@ Trust this well,
   } else {
     // Subsequent times: just show letter
     const letter = `
-Dear Bandito,
+    ${currentBanditoName},
 
 Time tHey come wandering through the shadows, seeking what the night conceals.
 Every trail you follow may hide a secret, but only those who look closely will see.
@@ -394,8 +397,11 @@ The whispers in the wind tell stories, some false, some true.
 Keep your eyes open, your mind sharper than the sharpest edge.
 Remember: sometimes guidance is not given by stars, but by what is hidden in plain sight.
 
-Trust this well,
-~Clancy
+Trust this well.
+
+Always,
+
+-Clancy
 `;
     const answer = "THE COMPASS LIES";
     let htmlLetter = '';
@@ -482,3 +488,99 @@ function openPhase3Terminal(banditoName) {
   });
 }
 
+// ---------- Bishop / footsteps mechanic ----------
+let bishopTimer = null;
+let bishopActive = false;
+let bishopResponseTimeout = null;
+let bishopListener = null;
+let autoHideThoughtTimer = null;
+
+// showThought/hideThought helpers using your existing DOM
+function showThought(text, noAutoHide = false) {
+  clearTimeout(autoHideThoughtTimer);
+  thoughtsBox.classList.remove('hidden');
+  thoughtsText.textContent = text;
+  if (!noAutoHide) {
+    autoHideThoughtTimer = setTimeout(() => {
+      hideThought();
+    }, 3000);
+  }
+}
+
+function hideThought() {
+  clearTimeout(autoHideThoughtTimer);
+  thoughtsBox.classList.add('hidden');
+  thoughtsText.textContent = '';
+}
+
+// call this to schedule a bishop event (random 10-30s)
+function triggerBishop() {
+  // cancel any previous bishop timer
+  if (bishopTimer) {
+    clearTimeout(bishopTimer);
+    bishopTimer = null;
+  }
+
+  const delay = Math.floor(Math.random() * (3000 - 1000 + 1)) + 10000; // 10-30s
+  bishopTimer = setTimeout(() => {
+    // Bishop arriving
+    bishopActive = true;
+
+    // show footsteps thought (don't auto-hide — wait for response)
+    showThought('*footsteps*', true);
+
+    // visually flash the hide button
+    hideButton.classList.add('flash-red');
+
+    // Start the 3s response window
+    bishopResponseTimeout = setTimeout(() => {
+      if (bishopActive) {
+        // Player failed to click in time
+        bishopActive = false;
+        hideButton.classList.remove('flash-red');
+        showThought('You were caught by a Bishop...', false);
+
+        // CLEANUP: remove special listener (if any)
+        if (bishopListener) {
+          hideButton.removeEventListener('click', bishopListener);
+          bishopListener = null;
+        }
+
+        // TODO: handle "loss" — for now we just show message; you can decide
+        // e.g. reset game, show game over overlay, deduct score, etc.
+      }
+    }, 3000);
+
+    // Add a one-time click listener to the hide button for this bishop event
+    bishopListener = () => {
+      if (!bishopActive) return;
+      // Player clicked in time — success
+      bishopActive = false;
+      clearTimeout(bishopResponseTimeout);
+      hideButton.classList.remove('flash-red');
+      showThought('Good job — they didn\'t see you.', false);
+
+      // remove this listener immediately (one-time)
+      hideButton.removeEventListener('click', bishopListener);
+      bishopListener = null;
+
+      triggerBishop();
+    };
+
+    hideButton.addEventListener('click', bishopListener);
+
+  }, delay);
+}
+
+// Optional helper to cancel a pending bishop (if you need it elsewhere)
+function cancelBishop() {
+  if (bishopTimer) clearTimeout(bishopTimer);
+  if (bishopResponseTimeout) clearTimeout(bishopResponseTimeout);
+  if (bishopListener) hideButton.removeEventListener('click', bishopListener);
+  bishopTimer = null;
+  bishopResponseTimeout = null;
+  bishopListener = null;
+  bishopActive = false;
+  hideButton.classList.remove('flash-red');
+  hideThought();
+}
