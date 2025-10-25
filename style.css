@@ -30,13 +30,13 @@ body {
   }
   
   /* Approximate screen zones — we’ll fine-tune later */
-  #screen1 { top: 24%; left: 3%; width: 7%; height: 10%; }
-  #screen2 { top: 23%; left: 13%; width: 15%; height: 20%; }
-  #screen3 { top: 9%; left: 35%; width: 9%; height: 22%; }
-  #screen4 { top: 39%; left: 33%; width: 23%; height: 30%;}
-  #screen5 { top: 20%; left: 64%; width: 13%; height: 18%; }
-  #screen6 { top: 7%; left: 75%; width: 7%; height: 8%; }
-  #screen7 { top: 25%; left: 85%; width: 12%; height: 14%; }
+    #screen1 { top: 24%; left: 3%; width: 7%; height: 10%; }
+    #screen2 { top: 23%; left: 13%; width: 15%; height: 20%; }
+    #screen3 { top: 9%; left: 35%; width: 9%; height: 22%; }
+    #screen4 { top: 39%; left: 33%; width: 23%; height: 30%;}
+    #screen5 { top: 20%; left: 64%; width: 13%; height: 18%; }
+    #screen6 { top: 7%; left: 75%; width: 7%; height: 8%; }
+    #screen7 { top: 25%; left: 85%; width: 12%; height: 14%; }
 
 /* number board */
     #s8 { top: 45%; left: 77%; width: 8%; height: 8%; }
@@ -49,17 +49,17 @@ body {
     #s15 { top: 68%; left: 85%; width: 8%; height: 9%; }
     #s16 { top: 70%; left: 95%; width: 5%; height: 11%; }
 
-    #button { top: 15%; left: 85%; width: 3%; height: 5%; }
-    #button.flash-red {
-        animation: redFlash 0.6s infinite;
-        border: 2px solid red;
-      }
-      
-      @keyframes redFlash {
-        0% { box-shadow: 0 0 5px red; }
-        50% { box-shadow: 0 0 15px red; }
-        100% { box-shadow: 0 0 5px red; }
-      }
+#button { top: 15%; left: 85%; width: 3%; height: 5%; }
+#button.flash-red {
+    animation: redFlash 0.6s infinite;
+    border: 2px solid red;
+    }
+    
+    @keyframes redFlash {
+    0% { box-shadow: 0 0 5px red; }
+    50% { box-shadow: 0 0 15px red; }
+    100% { box-shadow: 0 0 5px red; }
+    }
     
     .screen:hover {
     border: 1px solid #00ffff55;
@@ -122,66 +122,66 @@ body {
   }
   
   /* Intro overlay */
-#intro-screen {
-    position: fixed;
-    inset: 0;
-    background-color: #000;
-    color: #00ffcc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Courier New', monospace;
-    z-index: 999;
-    text-align: left;
-    transition: opacity 1s ease;
-  }
-  
-  .terminal {
-    width: 90%;
-    max-width: 850px;
-    padding: 30px;
-    border: 1px solid #00ffcc55;
-    background: rgba(0, 0, 0, 0.9);
-    box-shadow: 0 0 40px #00ffcc33;
-    font-size: 1.1rem;
-    line-height: 1.5;
-  }
-  
-  #intro-text {
-    white-space: pre-wrap;
-    font-size: 1.1rem;
-  }
-  
-  #login-screen {
-    text-align: center;
-  }
-  
-  #user-name {
-    background: black;
-    border: 1px solid #00ffcc;
-    color: #00ffcc;
-    padding: 8px 12px;
-    font-family: inherit;
-    font-size: 1.1rem;
-    margin-top: 10px;
-    width: 60%;
-    text-align: center;
-  }
-  
-  #login-btn, #begin-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: none;
-    border: 1px solid #00ffcc;
-    color: #00ffcc;
-    font-family: inherit;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  
-  #login-btn:hover, #begin-btn:hover {
-    background: #00ffcc22;
-  }
+    #intro-screen {
+        position: fixed;
+        inset: 0;
+        background-color: #000;
+        color: #00ffcc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Courier New', monospace;
+        z-index: 999;
+        text-align: left;
+        transition: opacity 1s ease;
+    }
+    
+    .terminal {
+        width: 90%;
+        max-width: 850px;
+        padding: 30px;
+        border: 1px solid #00ffcc55;
+        background: rgba(0, 0, 0, 0.9);
+        box-shadow: 0 0 40px #00ffcc33;
+        font-size: 1.1rem;
+        line-height: 1.5;
+    }
+    
+    #intro-text {
+        white-space: pre-wrap;
+        font-size: 1.1rem;
+    }
+    
+    #login-screen {
+        text-align: center;
+    }
+    
+    #user-name {
+        background: black;
+        border: 1px solid #00ffcc;
+        color: #00ffcc;
+        padding: 8px 12px;
+        font-family: inherit;
+        font-size: 1.1rem;
+        margin-top: 10px;
+        width: 60%;
+        text-align: center;
+    }
+    
+    #login-btn, #begin-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: none;
+        border: 1px solid #00ffcc;
+        color: #00ffcc;
+        font-family: inherit;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+    
+    #login-btn:hover, #begin-btn:hover {
+        background: #00ffcc22;
+    }
   
   .hidden {
     display: none;
@@ -233,86 +233,111 @@ body {
       }
       
 /* center terminal */
-#center-terminal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.9);
-    display: flex;   /* normal state */
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  #center-terminal.hidden {
-    display: none;   /* hide when class is applied */
-  }
-  
-  
-  
-  #center-terminal .terminal {
-    width: 400px;
-    max-width: 90%;
-    padding: 20px;
-    border: 1px solid #00ffcc55;
-    background: #111;
-    color: #00ffcc;
-    font-family: 'Orbitron', monospace;
-    text-align: left;
-    position: relative;
-  }
-  
-  #terminal-password {
-    width: 80%;
-    margin-right: 10px;
-    background: black;
-    border: 1px solid #00ffcc;
-    color: #00ffcc;
-    padding: 5px 8px;
-  }
-  
-  #terminal-login-btn {
-    background: none;
-    border: 1px solid #00ffcc;
-    color: #00ffcc;
-    cursor: pointer;
-    padding: 5px 10px;
-  }
-  
-  #terminal-login-btn:hover {
-    background: #00ffcc22;
-  }
-  
-  #terminal-close:hover {
-    background: #00ffcc22;
-  }
-  
-  #terminal-hint {
-    margin-left: 5px;
-    cursor: help;
-    color: #ffcc00;
-  }
+    #center-terminal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.9);
+        display: flex;   /* normal state */
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    
+    #center-terminal.hidden {
+        display: none;   /* hide when class is applied */
+    }
+    
+    #center-terminal .terminal {
+        width: 400px;
+        max-width: 90%;
+        padding: 20px;
+        border: 1px solid #00ffcc55;
+        background: #111;
+        color: #00ffcc;
+        font-family: 'Orbitron', monospace;
+        text-align: left;
+        position: relative;
+    }
+    
+    #terminal-password {
+        width: 80%;
+        margin-right: 10px;
+        background: black;
+        border: 1px solid #00ffcc;
+        color: #00ffcc;
+        padding: 5px 8px;
+    }
+    
+    #terminal-login-btn {
+        background: none;
+        border: 1px solid #00ffcc;
+        color: #00ffcc;
+        cursor: pointer;
+        padding: 5px 10px;
+    }
+    
+    #terminal-login-btn:hover {
+        background: #00ffcc22;
+    }
+    
+    #terminal-close:hover {
+        background: #00ffcc22;
+    }
+    
+    #terminal-hint {
+        margin-left: 5px;
+        cursor: help;
+        color: #ffcc00;
+    }
 
-  #terminal-close {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: none;
-    border: 1px solid #00ffcc;
-    color: #00ffcc;
-    cursor: pointer;
-    padding: 2px 6px;
-  }
+    #terminal-close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: none;
+        border: 1px solid #00ffcc;
+        color: #00ffcc;
+        cursor: pointer;
+        padding: 2px 6px;
+    }
   
   /* Incoming red flashing for a screen */
-.incoming-flash {
-    animation: incomingFlash 1s infinite;
-    border: 2px solid red; /* ensure border is visible */
-    background-color: black; /* start color */
-    z-index: 50; /* on top of screen content */
-  }
-  
-  @keyframes incomingFlash {
-    0% { background-color: black; border-color: red; }
-    50% { background-color: red; border-color: black; }
-    100% { background-color: black; border-color: red; }
-  }
+    .incoming-flash {
+        animation: incomingFlash 1s infinite;
+        border: 2px solid red; /* ensure border is visible */
+        background-color: black; /* start color */
+        z-index: 50; /* on top of screen content */
+    }
+    
+    @keyframes incomingFlash {
+        0% { background-color: black; border-color: red; }
+        50% { background-color: red; border-color: black; }
+        100% { background-color: black; border-color: red; }
+    }
+
+    .hidden { display: none !important; }
+
+/* style for the second terminal only */
+.phase2-terminal-window {
+  width: 90%;
+  max-width: 800px;
+  background: #000;
+  color: #00ffcc;
+  border: 2px solid #00ffcc;
+  padding: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  position: relative;
+  overflow-y: auto;
+  max-height: 80%;
+}
+
+#phase2-terminal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}

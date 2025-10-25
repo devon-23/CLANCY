@@ -40,6 +40,11 @@ const terminalClose = document.getElementById('terminal-close');
 const terminalHint = document.getElementById('terminal-hint');
 const hideButton = document.getElementById('button');
 
+// Phase 2 terminal elements
+const phase2Terminal = document.getElementById('phase2-terminal');
+const phase2Output = document.getElementById('phase2-terminal-output');
+const phase2Close = document.getElementById('phase2-terminal-close');
+
 // References to all screens
 const allScreens = [
     'screen1','screen2','screen3','screen4','screen5','screen6','screen7',
@@ -295,3 +300,57 @@ function startFirstMessage() {
     const screen3 = document.getElementById('screen3');
     screen3.classList.add('incoming-flash');
   }
+
+// Generate Bandito codename (simple example: add random suffix or anagram)
+function generateBanditoName(name) {
+    const suffixes = ['Shadow', 'Fox', 'Blade', 'Rogue', 'Echo'];
+    const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+    return name.split('').sort(() => Math.random() - 0.5).join('') + ' ' + randomSuffix;
+  }
+  // Typewriter effect
+function typePhase2Text(text, speed = 40, callback) {
+    let i = 0;
+    phase2Output.textContent = '';
+    const interval = setInterval(() => {
+      phase2Output.textContent += text.charAt(i);
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        if (callback) callback();
+      }
+    }, speed);
+  }
+  
+  // Open terminal when clicking screen3
+  const screen3 = document.getElementById('screen3');
+  screen3.addEventListener('click', () => {
+    pauseFlashing();
+    phase2Terminal.classList.remove('hidden');
+  
+    const banditoName = generateBanditoName(bishopName);
+    const messages = [
+      `>connected as: ${bishopName}`,
+      `>assigned bandito codename: ${banditoName}`,
+      `>connecting to Clancy...`,
+      `>clancy: glad you're on our side now, bandito ${banditoName}`,
+      `>clancy: okay, here is what I need you to post to dmaorg.info`,
+      `>...` // placeholder for puzzle
+    ];
+  
+    let msgIndex = 0;
+    function nextLine() {
+      if (msgIndex >= messages.length) return;
+      typePhase2Text(messages[msgIndex], 40, () => {
+        phase2Output.textContent += '\n';
+        msgIndex++;
+        setTimeout(nextLine, 500);
+      });
+    }
+    nextLine();
+  });
+  
+  // Close Phase 2 terminal
+  phase2Close.addEventListener('click', () => {
+    phase2Terminal.classList.add('hidden');
+    resumeFlashing();
+  });
