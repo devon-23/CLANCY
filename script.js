@@ -28,6 +28,20 @@ const terminalLoginBtn = document.getElementById('terminal-login-btn');
 const terminalMessage = document.getElementById('terminal-message');
 const terminalClose = document.getElementById('terminal-close');
 const terminalHint = document.getElementById('terminal-hint');
+const hideButton = document.getElementById('button');
+
+// References to all screens
+const allScreens = [
+    'screen1','screen2','screen3','screen4','screen5','screen6','screen7',
+    's8','s9','s10','s11','s12','s13','s14','s15','s16'
+  ];
+  
+  // Map each screen to its own temporary image
+  const screenTempImages = [
+    'temp1.png','temp2.png','temp3.png','temp4.png','temp5.png','temp6.png','temp7.png',
+    'temp8.png','temp9.png','temp10.png','temp11.png','temp12.png','temp13.png','temp14.png','temp15.png','temp16.png'
+  ];
+  
 
 let flashingPaused = false;
 let flashingTimeouts = []; // track all timeouts to pause/resume
@@ -177,7 +191,6 @@ terminalLoginBtn.addEventListener('click', () => {
       terminalMessage.textContent = "Welcome, an urgent message from Clancy is being transmitted…\nStand by for further messages.";
       terminalMessage.style.color = "#00ffcc";
   
-      // After a short delay, close the terminal and stop flashing
       setTimeout(() => {
         centerTerminal.classList.add('hidden');
   
@@ -186,9 +199,19 @@ terminalLoginBtn.addEventListener('click', () => {
         flashingTimeouts.forEach(timeout => clearTimeout(timeout));
         flashingTimeouts = [];
   
-        // Show special thoughts about secrecy
+        // Show special thoughts
         thoughtsBox.classList.remove('hidden');
-        thoughtsText.textContent = "I can't let any Bishop know what I'm doing here, helping Clancy… I'll be a glorious gone. When they come in, hit the red button at the top to hide all the screens.";
+        thoughtsText.textContent = "I can't let any Bishop know what I'm doing here, helping Clancy… I'll be a glorious gone. When they come in, hit the red button at the top right to hide all the screens.";
+  
+        // Start red flashing on the hide button
+        hideButton.classList.add('flash-red');
+  
+        // Remove thoughts and stop red flashing after 7 seconds
+        setTimeout(() => {
+          thoughtsBox.classList.add('hidden');
+          hideButton.classList.remove('flash-red');
+        }, 12000);
+  
       }, 2500);
   
     } else {
@@ -196,7 +219,39 @@ terminalLoginBtn.addEventListener('click', () => {
       terminalMessage.style.color = "#ff5555";
     }
   });
-  
-
 // Hint is automatically handled by the title attribute
 // <span id="terminal-hint" title="Looks like a phone keypad...">[?]</span>
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  hideButton.addEventListener('click', () => {
+    // Shuffle images
+    const shuffledImages = shuffleArray(screenTempImages);
+  
+    allScreens.forEach((id, index) => {
+        const screen = document.getElementById(id);
+      
+        // Create overlay image
+        const overlayImg = document.createElement('img');
+        overlayImg.src = `assets/` + shuffledImages[index];
+        overlayImg.style.position = 'absolute';
+        overlayImg.style.inset = '0';
+        overlayImg.style.width = '100%';
+        overlayImg.style.height = '100%';
+        overlayImg.style.objectFit = 'cover';
+        overlayImg.style.zIndex = '500';
+        screen.appendChild(overlayImg);
+        
+        // Remove overlay after 5 seconds
+        setTimeout(() => {
+          overlayImg.remove();
+        }, 5000);
+      });
+  });
