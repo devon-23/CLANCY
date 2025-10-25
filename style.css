@@ -401,3 +401,13 @@ body {
         outline: none;
     }
     
+
+    #terminal-output {
+        white-space: pre-wrap; /* preserves line breaks */
+        word-wrap: break-word; /* wraps long words */
+        overflow-y: auto;       /* adds vertical scroll if text is too long */
+        max-height: 100%;       /* ensures it stays inside the terminal box */
+        padding: 10px;
+        font-family: monospace;
+      }
+      

@@ -37,7 +37,6 @@ const terminalPassword = document.getElementById('terminal-password');
 const terminalLoginBtn = document.getElementById('terminal-login-btn');
 const terminalMessage = document.getElementById('terminal-message');
 const terminalClose = document.getElementById('terminal-close');
-const terminalHint = document.getElementById('terminal-hint');
 const hideButton = document.getElementById('button');
 let centerpuzzle = true;
 
@@ -49,6 +48,10 @@ const phase2Close = document.getElementById('phase2-terminal-close');
 let screen3Unlocked = false;
 let screen3Connected = false;
 let screen3Flashing = false;
+
+let phase3Unlocked = false;
+let phase3Active = false;
+let currentBanditoName = "";
 
 // References to all screens
 const allScreens = [
@@ -161,7 +164,7 @@ function playFlashingCycle() {
 }
 
 // ---------------------------
-// HIDE ALL MECHANIC (press H key)
+// HIDE ALL MECHANIC
 // ---------------------------
 const screens = document.querySelectorAll('.screen');
 document.addEventListener('keydown', (e) => {
@@ -174,7 +177,6 @@ document.addEventListener('keydown', (e) => {
 // ---------------------------
 // TERMINAL LOGIC
 // ---------------------------
-
 function pauseFlashing() {
   flashingPaused = true;
   flashingTimeouts.forEach(timeout => clearTimeout(timeout));
@@ -186,16 +188,21 @@ function resumeFlashing() {
   playFlashingCycle();
 }
 
-// Open terminal
+// Open central terminal
 centerScreen.addEventListener('click', () => {
-    if (!centerpuzzle) return; 
+  if (phase3Unlocked && !phase3Active) {
+    openPhase3Terminal(currentBanditoName);
+    return;
+  }
+
+  if (!centerpuzzle) return; 
   pauseFlashing();
   centerTerminal.classList.remove('hidden');
   terminalPassword.value = "";
   terminalMessage.textContent = "";
 });
 
-// Close terminal
+// Close central terminal
 terminalClose.addEventListener('click', () => {
   centerTerminal.classList.add('hidden');
   resumeFlashing();
@@ -306,10 +313,12 @@ function typePhase2Text(text, speed = 40, callback) {
   }, speed);
 }
 
+// ---------------------------
+// SCREEN 3 CLICK: PHASE 2 LETTER
+// ---------------------------
 const screen3 = document.getElementById('screen3');
-screen3.addEventListener('click', () => {
-  if (!screen3Unlocked) return;
 
+screen3.addEventListener('click', () => {
   if (screen3Flashing) {
     screen3.classList.remove('incoming-flash');
     screen3Flashing = false;
@@ -318,40 +327,104 @@ screen3.addEventListener('click', () => {
   pauseFlashing();
   phase2Terminal.classList.remove('hidden');
 
-  const banditoName = generateBanditoName(bishopName);
-
-  let messages;
   if (!screen3Connected) {
-    messages = [
-      `>connected as: ${bishopName}`,
-      `>assigned bandito codename: ${banditoName}`,
-      `>connecting to Clancy...`,
-      `>clancy: glad you're on our side now, bandito ${banditoName}`,
-      `>clancy: okay, here is what I need you to post to dmaorg.info`,
-      `>...`
-    ];
-    screen3Connected = true;
-  } else {
-    messages = [
-      `>connecting to Clancy...`,
-      `>clancy: here's the first message.`,
-      `>...`
-    ];
+    currentBanditoName = generateBanditoName(bishopName); // store for Phase 3
   }
 
-  phase2Output.textContent = '';
-  let msgIndex = 0;
-  function nextLine() {
-    if (msgIndex >= messages.length) return;
-    typePhase2Text(messages[msgIndex], 40, () => {
-      phase2Output.textContent += '\n';
-      msgIndex++;
-      setTimeout(nextLine, 1000);
-    });
+  const letter = `
+Dear Bandito,
+
+Time tHey come wandering through the shadows, seeking what the night conceals.
+Every trail you follow may hide a secret, but only those who look closely will see.
+The whispers in the wind tell stories, some false, some true.
+Keep your eyes open, your mind sharper than the sharpest edge.
+Remember: sometimes guidance is not given by stars, but by what is hidden in plain sight.
+
+Trust this well,
+~Clancy
+`;
+
+  const answer = "THE COMPASS LIES";
+  let htmlLetter = '';
+  let answerIndex = 0;
+  for (let char of letter) {
+    if (char.toUpperCase() === answer[answerIndex]) {
+      htmlLetter += `<span style="color:yellow;">${char}</span>`;
+      answerIndex++;
+      if (answerIndex >= answer.length) answerIndex = answer.length;
+    } else {
+      htmlLetter += char;
+    }
   }
-  nextLine();
+
+  phase2Output.innerHTML = htmlLetter;
+  screen3Connected = true;
+  phase3Unlocked = true; // unlock Phase 3 for center screen
 });
 
 phase2Close.addEventListener('click', () => {
   phase2Terminal.classList.add('hidden');
 });
+
+// ---------------------------
+// PHASE 3 TERMINAL
+// ---------------------------
+function openPhase3Terminal(banditoName) {
+  phase3Active = true;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'terminal-overlay';
+  overlay.innerHTML = `
+    <div class="terminal phase3">
+      <button id="phase3-close" style="position:absolute; top:5px; right:10px;">X</button>
+      <pre id="phase3-output"></pre>
+      <input id="phase3-input" type="text" placeholder="dmaorg.info> type your answer here..." autocomplete="off" />
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const output = overlay.querySelector('#phase3-output');
+  const input = overlay.querySelector('#phase3-input');
+  const close = overlay.querySelector('#phase3-close');
+
+  output.textContent = `> Welcome back, Bandito ${banditoName}\n> Connecting to dmaorg.info...\n`;
+  setTimeout(() => {
+    output.textContent += `> Connection established [SECURE]\n\n`;
+    output.textContent += `dmaorg.info> type your answer here...\n`;
+    input.focus();
+  }, 700);
+
+  function normalizeAnswer(s) {
+    return s.toLowerCase().trim().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ');
+  }
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const raw = input.value;
+      const answer = normalizeAnswer(raw);
+      if (!answer) return;
+
+      output.textContent += `dmaorg.info> ${raw}\n`;
+      input.value = "";
+
+      const correct = "the compass lies";
+      if (answer === correct) {
+        setTimeout(() => {
+          output.textContent += `> Transmission received.\n> Clancy: You solved it — the compass lies. Good work, Bandito ${banditoName}.\n> Proceed to the next transmission...\n`;
+        }, 700);
+      } else {
+        setTimeout(() => {
+          output.textContent += `> system: Transmission rejected. Try again.\n`;
+          input.focus();
+        }, 400);
+      }
+    }
+  });
+
+  close.addEventListener('click', () => {
+    overlay.remove();
+    phase3Active = false;
+  });
+}
+
