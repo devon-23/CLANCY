@@ -20,6 +20,16 @@ const numberToScreen = {
   7: 14, 8: 15, 9: 16
 };
 
+const phaseTwoThoughts = [
+    "Now I'm connected to Clancy's transmission directly...",
+    "Each of these screens will flash when an incoming encrypted message is sent.",
+    "When you solve it, go back to the center screen.",
+    "Let's help the Banditos relay messages to the rest of the Banditos and not get caught by a Bishop~",
+    "Let's wait for the first message..."
+  ];
+  
+  let phaseTwoIndex = 0;
+
 // Central Terminal
 const centerScreen = document.getElementById('screen4');
 const centerTerminal = document.getElementById('center-terminal');
@@ -186,7 +196,7 @@ terminalClose.addEventListener('click', () => {
 // Validate password
 terminalLoginBtn.addEventListener('click', () => {
     const pw = terminalPassword.value.trim().toLowerCase();
-    if (pw === "code clancy") {
+    if (pw === "s") {
       // Show Clancy message
       terminalMessage.textContent = "Welcome, an urgent message from Clancy is being transmitted…\nStand by for further messages.";
       terminalMessage.style.color = "#00ffcc";
@@ -210,10 +220,10 @@ terminalLoginBtn.addEventListener('click', () => {
         setTimeout(() => {
           thoughtsBox.classList.add('hidden');
           hideButton.classList.remove('flash-red');
-        }, 12000);
+        }, 10000);
   
       }, 2500);
-  
+        startPhaseTwo();
     } else {
       terminalMessage.textContent = "Incorrect password!";
       terminalMessage.style.color = "#ff5555";
@@ -255,3 +265,33 @@ function shuffleArray(array) {
         }, 5000);
       });
   });
+
+  // Start Phase 2
+function startPhaseTwo() {
+    // Show each thought in sequence
+    function showNextThought() {
+      if (phaseTwoIndex >= phaseTwoThoughts.length) {
+        // All thoughts shown, start first incoming message
+        startFirstMessage();
+        return;
+      }
+  
+      thoughtsBox.classList.remove('hidden');
+      thoughtsText.textContent = phaseTwoThoughts[phaseTwoIndex];
+      phaseTwoIndex++;
+  
+      // Display each thought for 4 seconds
+      setTimeout(() => {
+        thoughtsBox.classList.add('hidden');
+        setTimeout(showNextThought, 500); // small delay between thoughts
+      }, 4000);
+    }
+  
+    showNextThought();
+  }
+  
+  // First incoming message: screen3 starts flashing red
+function startFirstMessage() {
+    const screen3 = document.getElementById('screen3');
+    screen3.classList.add('incoming-flash');
+  }
