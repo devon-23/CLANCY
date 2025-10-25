@@ -1,3 +1,7 @@
+// ---------------------------
+// GLOBAL VARIABLES
+// ---------------------------
+
 // Screen mapping (keypad layout)
 const keypadOrder = [8,9,10,11,12,13,14,15,16];
 const keypadNumbers = {
@@ -17,10 +21,12 @@ const numberToScreen = {
   7: 14, 8: 15, 9: 16
 };
 
+// Intro text template
 let bishopName = "";
 const introTextTemplate = (name) => `
 Welcome, ${name}.
-
+`;
+/*
 You’ve done well to hide your doubts — most Bishops never question the walls of Dema. 
 But I’ve seen your transmissions. I know what you’re risking by accessing this node.
 
@@ -38,12 +44,16 @@ Your mission:
 This rebellion depends on your discretion.
 
 Prepare yourself, ${name}. You’re not alone anymore.
-`;
+*/
+
 
 let i = 0;
 let introText = "";
-const speed = 1; // adjust typing speed
+const speed = 1; // typing speed for intro
 
+// ---------------------------
+// LOGIN + INTRO TYPEWRITER
+// ---------------------------
 document.getElementById("login-btn").addEventListener("click", () => {
   const input = document.getElementById("user-name");
   bishopName = input.value.trim() || "Bishop";
@@ -66,33 +76,74 @@ function typeIntro() {
 document.getElementById("begin-btn").addEventListener("click", () => {
   const introScreen = document.getElementById("intro-screen");
   introScreen.style.opacity = 0;
-  
-  // Wait for fade-out, then hide intro & start keypad
   setTimeout(() => {
     introScreen.style.display = "none";
     document.getElementById("controlRoom").style.display = "block";
-    showKeypad(); // 🔥 Start animation *after* fade
+    initKeypad();
   }, 1000);
 });
 
 // ---------------------------
-// KEYPAD + FLASH SEQUENCE
+// KEYPAD NUMBERS DISPLAY
 // ---------------------------
-function showKeypad() {
+function initKeypad() {
   keypadOrder.forEach(id => {
-    document.getElementById(`s${id}`).textContent = keypadNumbers[id];
+    const screen = document.getElementById("s" + id);
+    screen.textContent = keypadNumbers[id];
   });
-  setTimeout(playCodeSequence, 2000);
+
+  // Start first flashing cycle after 2s
+  setTimeout(playFlashingCycle, 2000);
 }
 
-function playCodeSequence() {
+// ---------------------------
+// FLASHING CODE + THOUGHTS LOOP
+// ---------------------------
+const thoughtsBox = document.getElementById('thoughts-box');
+const thoughtsText = document.getElementById('thoughts-text');
+const thoughts = [
+  "That's a weird flashing… wonder what it means…",
+  "Do we think Clancy is trying to tell us something?",
+  "Maybe the middle screen has the answer…"
+];
+let thoughtIndex = 0;
+
+function playFlashingCycle() {
+  // Flash code sequence
   let delay = 0;
   codeSequence.forEach(num => {
-    const screen = document.getElementById(`s${numberToScreen[num]}`);
+    const screen = document.getElementById('s' + numberToScreen[num]);
     setTimeout(() => {
       screen.classList.add('flash');
       setTimeout(() => screen.classList.remove('flash'), 400);
     }, delay);
     delay += 600;
   });
+
+  // Show thought after flashing ends
+  setTimeout(() => {
+    thoughtsBox.classList.remove('hidden');
+    thoughtsText.textContent = thoughts[thoughtIndex % thoughts.length];
+    thoughtIndex++;
+
+    // Hide thought and restart flashing after 3s
+    setTimeout(() => {
+      thoughtsBox.classList.add('hidden');
+      playFlashingCycle();
+    }, 3000);
+  }, delay + 300);
 }
+
+// ---------------------------
+// SCREEN CLICK MODALS (PUZZLE POPUPS)
+// ---------------------------
+
+// ---------------------------
+// HIDE ALL MECHANIC (press H key)
+// ---------------------------
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'h') {
+    screens.forEach(s => s.style.visibility = 'hidden');
+    setTimeout(() => screens.forEach(s => s.style.visibility = 'visible'), 3000);
+  }
+});

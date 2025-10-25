@@ -20,6 +20,13 @@ body {
     position: absolute;
     cursor: pointer;
     border: 1px solid transparent;
+    display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem; /* make it bigger */
+        color: #00ffcc;
+        font-family: 'Courier New', monospace; /* we'll swap this next */
+        user-select: none;
   }
   
   /* Approximate screen zones — we’ll fine-tune later */
@@ -154,10 +161,37 @@ body {
   }
 
     .flash {
-        animation: flash 1s ease;
+        animation: flash 1.8s ease;
     }
 
     @keyframes flash {
-        0% { color: black; background: lime; }
-        100% { color: lime; background: black; }
+        0% { color: black; background: rgb(174, 0, 255); }
+        100% { color: rgb(208, 0, 255); background: black; }
     }
+    .screen-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem; /* make it bigger */
+        color: #00ffcc;
+        font-family: 'Courier New', monospace; /* we'll swap this next */
+        user-select: none;
+      }
+      
+
+      #thoughts-box {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.8);
+        border: 1px solid #00ffcc55;
+        padding: 15px 20px;
+        color: #00ffcc;
+        font-family: 'Orbitron', monospace;
+        font-size: 1.2rem;
+        max-width: 70%;
+        text-align: center;
+        box-shadow: 0 0 15px #00ffcc33;
+      }
+      
