@@ -24,7 +24,7 @@ const phaseTwoThoughts = [
   "Now I'm connected to Clancy's transmission directly...",
   "Each of these screens will flash when an incoming encrypted message is sent.",
   "When you solve it, go back to the center screen.",
-  "Let's help the Banditos relay messages to the rest of the Banditos and not get caught by a Bishop~",
+  "Beware of Nico - when you hear footsteps hit the red button in the top right to hide the screens.",
   "Let's wait for the first message..."
 ];
 
@@ -45,7 +45,8 @@ const phase2Terminal = document.getElementById('phase2-terminal');
 const phase2Output = document.getElementById('terminal-output');
 const phase2Close = document.getElementById('phase2-terminal-close');
 
-let screen3Unlocked = true; //testing purposs
+//compass lies code
+let screen3Unlocked = false; //testing purposs
 let screen3Connected = false;
 let screen3Flashing = false;
 
@@ -72,6 +73,24 @@ let flashingTimeouts = []; // track all timeouts to pause/resume
 let bishopName = "";
 const introTextTemplate = (name) => `
 Welcome, ${name}.
+
+You’ve done well to hide your doubts — most Bishops never question the walls of Dema. 
+But I’ve seen your transmissions. I know what you’re risking by accessing this node.
+
+The system you’ve connected to is compromised. 
+I am Clancy. I’m reaching out from beyond the city walls — the Banditos need your help.
+
+Encrypted messages are being sent through your control panels. 
+Each broadcast contains fragments of the truth — pieces of what Dema hides.
+
+Your mission:
+→ Decode Clancy’s transmissions.
+→ Relay the decrypted data through the central terminal (middle screen).
+→ Do not be detected. If a Bishop enters the room, hit the red button immediately.
+
+This rebellion depends on your discretion.
+
+Prepare yourself, ${name}. You’re not alone anymore.
 `;
 
 // ---------------------------
@@ -79,7 +98,7 @@ Welcome, ${name}.
 // ---------------------------
 let i = 0;
 let introText = "";
-const speed = 1; // typing speed for intro
+const speed = 25; // typing speed for intro
 
 document.getElementById("login-btn").addEventListener("click", () => {
   const input = document.getElementById("user-name");
@@ -211,7 +230,7 @@ terminalClose.addEventListener('click', () => {
 // Validate password
 terminalLoginBtn.addEventListener('click', () => {
   const pw = terminalPassword.value.trim().toLowerCase();
-  if (pw === "s") {
+  if (pw === "s" || pw === "code clancy" || pw == "codeclancy") {
     terminalMessage.textContent = "Welcome, an urgent message from Clancy is being transmitted…\nStand by for further messages.";
     terminalMessage.style.color = "#00ffcc";
 
@@ -223,7 +242,7 @@ terminalLoginBtn.addEventListener('click', () => {
       flashingTimeouts = [];
 
       thoughtsBox.classList.remove('hidden');
-      thoughtsText.textContent = "I can't let any Bishop know what I'm doing here, helping Clancy… I'll be a glorious gone. When they come in, hit the red button at the top right to hide all the screens.";
+      thoughtsText.textContent = "I can't let any Bishop know what I'm doing here, helping Clancy… I'll be a glorious gone.";
 
       hideButton.classList.add('flash-red');
       setTimeout(() => {
@@ -337,7 +356,7 @@ screen3.addEventListener('click', () => {
       `>assigned bandito codename: ${currentBanditoName}`,
       `>connecting to Clancy...`,
       `>clancy: glad you're on our side now, bandito ${currentBanditoName}`,
-      `>clancy: okay, here is what I need you to post to dmaorg.info`
+      `>clancy: okay, here is what I need you to decrypt and post to dmaorg.info`
     ];
 
     const letter = `
@@ -471,7 +490,8 @@ function openPhase3Terminal(banditoName) {
       if (answer === correct) {
         setTimeout(() => {
           output.textContent += `> Transmission received.\n> Clancy: You solved it — the compass lies. Good work, Bandito ${banditoName}.\n> Proceed to the next transmission...\n`;
-          //to do disabble that screen
+          //to do disable that screen
+          screen3Unlocked = false;
         }, 700);
       } else {
         setTimeout(() => {
@@ -534,20 +554,16 @@ function triggerBishop() {
 
     // Start the 3s response window
     bishopResponseTimeout = setTimeout(() => {
-      if (bishopActive) {
-        // Player failed to click in time
+      if (bishopActive) { // Player failed to click in time
         bishopActive = false;
         hideButton.classList.remove('flash-red');
-        showThought('You were caught by a Bishop...', false);
+        startLoseSequence();
 
         // CLEANUP: remove special listener (if any)
         if (bishopListener) {
           hideButton.removeEventListener('click', bishopListener);
           bishopListener = null;
         }
-
-        // TODO: handle "loss" — for now we just show message; you can decide
-        // e.g. reset game, show game over overlay, deduct score, etc.
       }
     }, 3000);
 
@@ -584,3 +600,56 @@ function cancelBishop() {
   hideButton.classList.remove('flash-red');
   hideThought();
 }
+
+// ---------- You Lose Sequence ----------
+function startLoseSequence() {
+    cancelBishop(); // stop any other bishop timers
+    pauseFlashing();
+    // to do make everything on screen disabled, no clicking, maybe dim background
+    const dialogue = [
+      { speaker: "Nico", text: "What are you doing?!" },
+      { speaker: "You", text: "Uh… nothing!" },
+      { speaker: "Nico", text: "Don't lie to me, Bandito. I’ve seen enough." },
+      { speaker: "You", text: "Wait—Nico, please—" },
+      { speaker: "Nico", text: "You’re done. The Bishops were right about you." },
+      { speaker: "System", text: "*signal lost...*" }
+    ];
+  
+    let index = 0;
+  
+    function showNextLine() {
+      if (index >= dialogue.length) {
+        // Dialogue done — show YOU LOSE screen
+        showLoseOverlay();
+        return;
+      }
+  
+      const line = dialogue[index];
+      showThought(`${line.speaker}: ${line.text}`, true);
+      index++;
+  
+      setTimeout(showNextLine, 2500); // delay between dialogue lines
+    }
+  
+    showNextLine();
+  }
+  
+  function showLoseOverlay() {
+    const overlay = document.createElement("div");
+    overlay.className = "lose-overlay";
+    overlay.innerHTML = `
+      <div class="lose-box">
+        <h1>YOU LOSE</h1>
+        <p>The Bishops have caught you.</p>
+        <p>Try again?</p>
+        <button id="retry-btn">always</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  
+    const retry = overlay.querySelector("#retry-btn");
+    retry.addEventListener("click", () => {
+      location.reload(); // refresh and restart game
+    });
+  }
+  

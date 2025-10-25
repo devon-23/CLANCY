@@ -415,3 +415,54 @@ body {
         font-family: monospace;
       }
       
+      .lose-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: #fff;
+        z-index: 9999;
+        animation: fadeIn 0.6s ease forwards;
+      }
+      
+      .lose-box {
+        text-align: center;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 1px;
+      }
+      
+      .lose-box h1 {
+        color: #ff5555;
+        font-size: 3em;
+        margin-bottom: 10px;
+      }
+      
+      .lose-box p {
+        margin-bottom: 20px;
+        opacity: 0.8;
+      }
+      
+      .lose-box button {
+        background: none;
+        border: 1px solid #fff;
+        color: #fff;
+        padding: 10px 30px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      
+      .lose-box button:hover {
+        background: #ff5555;
+        color: black;
+        border-color: #ff5555;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
