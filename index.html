@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Good Day Dema Control Room</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="control-room">
+    <img src="assets/control-room.png" alt="Dema Control Room" id="room-bg" />
+
+    <!-- Clickable screens -->
+    <div class="screen" id="screen1" data-target="puzzle1"></div>
+    <div class="screen" id="screen2" data-target="puzzle2"></div>
+    <div class="screen" id="screen3" data-target="puzzle3"></div>
+    
+    <!-- Hidden puzzle modal -->
+    <div id="puzzle-modal" class="hidden">
+      <div class="modal-content">
+        <button id="close-puzzle">x</button>
+        <div id="puzzle-content"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
