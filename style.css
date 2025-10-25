@@ -5,7 +5,7 @@ body {
     font-family: 'Courier New', monospace;
   }
   
-  #control-room {
+  #controlRoom {
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -32,16 +32,15 @@ body {
   #screen7 { top: 25%; left: 85%; width: 12%; height: 14%; }
 
 /* number board */
-    #screen8 { top: 45%; left: 77%; width: 8%; height: 8%; }
-    #screen9 { top: 45%; left: 86%; width: 8%; height: 8%;}
-    #screen10 { top: 45%; left: 96%; width: 4%; height: 9%; }
-    #screen11 { top: 56%; left: 77%; width: 6%; height: 8%; }
-    #screen12 { top: 56%; left: 85%; width: 8%; height: 9%; }
-    #screen13 { top: 57%; left: 96%; width: 4%; height: 10%; }
-    #screen14 { top: 66%; left: 76%; width: 7%; height: 9%; }
-    #screen15 { top: 68%; left: 85%; width: 8%; height: 9%; }
-    #screen16 { top: 70%; left: 95%; width: 5%; height: 11%; }
-
+    #s8 { top: 45%; left: 77%; width: 8%; height: 8%; }
+    #s9 { top: 45%; left: 86%; width: 8%; height: 8%;}
+    #s10 { top: 45%; left: 96%; width: 4%; height: 9%; }
+    #s11 { top: 56%; left: 77%; width: 6%; height: 8%; }
+    #s12 { top: 56%; left: 85%; width: 8%; height: 9%; }
+    #s13 { top: 57%; left: 96%; width: 4%; height: 10%; }
+    #s14 { top: 66%; left: 76%; width: 7%; height: 9%; }
+    #s15 { top: 68%; left: 85%; width: 8%; height: 9%; }
+    #s16 { top: 70%; left: 95%; width: 5%; height: 11%; }
   .screen:hover {
     border: 1px solid #00ffff55;
   }
@@ -78,3 +77,87 @@ body {
     cursor: pointer;
   }
   
+  /* Intro overlay */
+#intro-screen {
+    position: fixed;
+    inset: 0;
+    background-color: #000;
+    color: #00ffcc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    z-index: 999;
+    text-align: left;
+    transition: opacity 1s ease;
+  }
+  
+  .terminal {
+    width: 90%;
+    max-width: 850px;
+    padding: 30px;
+    border: 1px solid #00ffcc55;
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 40px #00ffcc33;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+  
+  #intro-text {
+    white-space: pre-wrap;
+    font-size: 1.1rem;
+  }
+  
+  #login-screen {
+    text-align: center;
+  }
+  
+  #user-name {
+    background: black;
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 1.1rem;
+    margin-top: 10px;
+    width: 60%;
+    text-align: center;
+  }
+  
+  #login-btn, #begin-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: none;
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  #login-btn:hover, #begin-btn:hover {
+    background: #00ffcc22;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+
+  /* first puzzle */
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 8px;
+    justify-content: center;
+    margin-top: 50px;
+  }
+
+    .flash {
+        animation: flash 1s ease;
+    }
+
+    @keyframes flash {
+        0% { color: black; background: lime; }
+        100% { color: lime; background: black; }
+    }

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="control-room">
+  <div id="controlRoom">
     <img src="assets/control-room.png" alt="Dema Control Room" id="room-bg" />
 
     <!-- Clickable screens -->
@@ -18,25 +18,37 @@
     <div class="screen" id="screen5" data-target="puzzle3"></div>
     <div class="screen" id="screen6" data-target="puzzle3"></div>
     <div class="screen" id="screen7" data-target="puzzle3"></div>
-    <div class="screen" id="screen8" data-target="puzzle3"></div>
-    <div class="screen" id="screen9" data-target="puzzle3"></div>
-    <div class="screen" id="screen10" data-target="puzzle3"></div>
-    <div class="screen" id="screen11" data-target="puzzle3"></div>
-    <div class="screen" id="screen12" data-target="puzzle3"></div>
-    <div class="screen" id="screen13" data-target="puzzle3"></div>
-    <div class="screen" id="screen14" data-target="puzzle3"></div>
-    <div class="screen" id="screen15" data-target="puzzle3"></div>
-    <div class="screen" id="screen16" data-target="puzzle3"></div>
-    <div class="screen" id="screen17" data-target="puzzle3"></div>
     
-    <!-- Hidden puzzle modal 
-    <div id="puzzle-modal" class="hidden">
-      <div class="modal-content">
-        <button id="close-puzzle">x</button>
-        <div id="puzzle-content"></div>
-      </div>
-      -->
+    <!-- numer screen -->
+    <div id="grid">
+        <div class="screen" id="s8"></div>
+        <div class="screen" id="s9"></div>
+        <div class="screen" id="s10"></div>
+        <div class="screen" id="s11"></div>
+        <div class="screen" id="s12"></div>
+        <div class="screen" id="s13"></div>
+        <div class="screen" id="s14"></div>
+        <div class="screen" id="s15"></div>
+        <div class="screen" id="s16"></div>
+        <div class="screen" id="s17"></div>
     </div>
+    <!-- Intro Terminal Overlay -->
+    <div id="intro-screen">
+        <div class="terminal">
+        <!-- Step 1: Login Prompt -->
+        <div id="login-screen">
+            <p>Good Day, Bishop.</p>
+            <p>Identification required to access Control Node.</p>
+            <input type="text" id="user-name" placeholder="Enter name..." autocomplete="off">
+            <button id="login-btn">Authenticate</button>
+        </div>
+    
+        <!-- Step 2: Typewriter Intro -->
+        <pre id="intro-text" class="hidden"></pre>
+        <button id="begin-btn" class="hidden">Click Here to Begin</button>
+        </div>
+    </div>
+    
   </div>
   
   <script src="script.js"></script>
