@@ -317,8 +317,8 @@ function typePhase2Text(text, speed = 40, callback) {
 // SCREEN 3 CLICK: PHASE 2 LETTER
 // ---------------------------
 const screen3 = document.getElementById('screen3');
-
 screen3.addEventListener('click', () => {
+    if (!screen3Unlocked) return;
   if (screen3Flashing) {
     screen3.classList.remove('incoming-flash');
     screen3Flashing = false;
@@ -328,10 +328,18 @@ screen3.addEventListener('click', () => {
   phase2Terminal.classList.remove('hidden');
 
   if (!screen3Connected) {
-    currentBanditoName = generateBanditoName(bishopName); // store for Phase 3
-  }
+    // Generate Bandito name once
+    currentBanditoName = generateBanditoName(bishopName);
 
-  const letter = `
+    const messages = [
+      `>connected as: ${bishopName}`,
+      `>assigned bandito codename: ${currentBanditoName}`,
+      `>connecting to Clancy...`,
+      `>clancy: glad you're on our side now, bandito ${currentBanditoName}`,
+      `>clancy: okay, here is what I need you to post to dmaorg.info`
+    ];
+
+    const letter = `
 Dear Bandito,
 
 Time tHey come wandering through the shadows, seeking what the night conceals.
@@ -344,23 +352,68 @@ Trust this well,
 ~Clancy
 `;
 
-  const answer = "THE COMPASS LIES";
-  let htmlLetter = '';
-  let answerIndex = 0;
-  for (let char of letter) {
-    if (char.toUpperCase() === answer[answerIndex]) {
-      htmlLetter += `<span style="color:yellow;">${char}</span>`;
-      answerIndex++;
-      if (answerIndex >= answer.length) answerIndex = answer.length;
-    } else {
-      htmlLetter += char;
+    const answer = "THE COMPASS LIES";
+    let htmlLetter = '';
+    let answerIndex = 0;
+    for (let char of letter) {
+      if (char.toUpperCase() === answer[answerIndex]) {
+        htmlLetter += `<span style="color:yellow;">${char}</span>`;
+        answerIndex++;
+        if (answerIndex >= answer.length) answerIndex = answer.length;
+      } else {
+        htmlLetter += char;
+      }
     }
-  }
 
-  phase2Output.innerHTML = htmlLetter;
-  screen3Connected = true;
-  phase3Unlocked = true; // unlock Phase 3 for center screen
+    phase2Output.textContent = '';
+    let msgIndex = 0;
+
+    function nextLine() {
+      if (msgIndex >= messages.length) {
+        phase2Output.innerHTML += `<br><br>${htmlLetter}`;
+        screen3Connected = true;
+        phase3Unlocked = true; // unlock Phase 3
+        return;
+      }
+      typePhase2Text(messages[msgIndex], 40, () => {
+        phase2Output.textContent += '\n';
+        msgIndex++;
+        setTimeout(nextLine, 500);
+      });
+    }
+    nextLine();
+
+  } else {
+    // Subsequent times: just show letter
+    const letter = `
+Dear Bandito,
+
+Time tHey come wandering through the shadows, seeking what the night conceals.
+Every trail you follow may hide a secret, but only those who look closely will see.
+The whispers in the wind tell stories, some false, some true.
+Keep your eyes open, your mind sharper than the sharpest edge.
+Remember: sometimes guidance is not given by stars, but by what is hidden in plain sight.
+
+Trust this well,
+~Clancy
+`;
+    const answer = "THE COMPASS LIES";
+    let htmlLetter = '';
+    let answerIndex = 0;
+    for (let char of letter) {
+      if (char.toUpperCase() === answer[answerIndex]) {
+        htmlLetter += `<span style="color:yellow;">${char}</span>`;
+        answerIndex++;
+        if (answerIndex >= answer.length) answerIndex = answer.length;
+      } else {
+        htmlLetter += char;
+      }
+    }
+
+    phase2Output.innerHTML = htmlLetter;
+  }
 });
+
 
 phase2Close.addEventListener('click', () => {
   phase2Terminal.classList.add('hidden');
@@ -412,6 +465,7 @@ function openPhase3Terminal(banditoName) {
       if (answer === correct) {
         setTimeout(() => {
           output.textContent += `> Transmission received.\n> Clancy: You solved it — the compass lies. Good work, Bandito ${banditoName}.\n> Proceed to the next transmission...\n`;
+          //to do disabble that screen
         }, 700);
       } else {
         setTimeout(() => {
