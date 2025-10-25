@@ -32,6 +32,7 @@
         <div class="screen" id="s16"></div>
         <div class="screen" id="s17"></div>
     </div>
+    <div class="screen" id="button"></div>
     <!-- Intro Terminal Overlay -->
     <div id="intro-screen">
         <div class="terminal">
@@ -48,6 +49,19 @@
         <button id="begin-btn" class="hidden">Click Here to Begin</button>
         </div>
     </div>
+
+    <div id="center-terminal" class="hidden">
+        <div class="terminal">
+          <button id="terminal-close">X</button>
+          <p id="terminal-status">Connecting to secure terminal...</p>
+          <p>Password required:</p>
+          <input type="password" id="terminal-password" placeholder="Enter password" autocomplete="off">
+          <button id="terminal-login-btn">Enter</button>
+          <span id="terminal-hint" title="Looks like a phone keypad...">[?]</span>
+          <p id="terminal-message"></p>
+        </div>
+      </div>
+      
 
     <div id="thoughts-box" class="hidden">
         <p id="thoughts-text"></p>

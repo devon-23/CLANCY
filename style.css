@@ -48,9 +48,12 @@ body {
     #s14 { top: 66%; left: 76%; width: 7%; height: 9%; }
     #s15 { top: 68%; left: 85%; width: 8%; height: 9%; }
     #s16 { top: 70%; left: 95%; width: 5%; height: 11%; }
-  .screen:hover {
+
+    #button { top: 15%; left: 85%; width: 3%; height: 5%; }
+    .screen:hover {
     border: 1px solid #00ffff55;
   }
+
   
   #puzzle-modal {
     position: fixed;
@@ -195,3 +198,75 @@ body {
         box-shadow: 0 0 15px #00ffcc33;
       }
       
+/* center terminal */
+#center-terminal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;   /* normal state */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  #center-terminal.hidden {
+    display: none;   /* hide when class is applied */
+  }
+  
+  
+  
+  #center-terminal .terminal {
+    width: 400px;
+    max-width: 90%;
+    padding: 20px;
+    border: 1px solid #00ffcc55;
+    background: #111;
+    color: #00ffcc;
+    font-family: 'Orbitron', monospace;
+    text-align: left;
+    position: relative;
+  }
+  
+  #terminal-password {
+    width: 80%;
+    margin-right: 10px;
+    background: black;
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+    padding: 5px 8px;
+  }
+  
+  #terminal-login-btn {
+    background: none;
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  
+  #terminal-login-btn:hover {
+    background: #00ffcc22;
+  }
+  
+  #terminal-close:hover {
+    background: #00ffcc22;
+  }
+  
+  #terminal-hint {
+    margin-left: 5px;
+    cursor: help;
+    color: #ffcc00;
+  }
+
+  #terminal-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+    cursor: pointer;
+    padding: 2px 6px;
+  }
+  
+  

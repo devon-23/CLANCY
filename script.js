@@ -11,7 +11,6 @@ const keypadNumbers = {
 };
 
 // “CODE CLANCY” → numbers using phone keypad
-// C=2, O=6, D=3, E=3, C=2, L=5, A=2, N=6, C=2, Y=9
 const codeSequence = [2,6,3,3,2,5,2,6,2,9];
 
 // Map number to screen ID
@@ -21,39 +20,31 @@ const numberToScreen = {
   7: 14, 8: 15, 9: 16
 };
 
+// Central Terminal
+const centerScreen = document.getElementById('screen4');
+const centerTerminal = document.getElementById('center-terminal');
+const terminalPassword = document.getElementById('terminal-password');
+const terminalLoginBtn = document.getElementById('terminal-login-btn');
+const terminalMessage = document.getElementById('terminal-message');
+const terminalClose = document.getElementById('terminal-close');
+const terminalHint = document.getElementById('terminal-hint');
+
+let flashingPaused = false;
+let flashingTimeouts = []; // track all timeouts to pause/resume
+
 // Intro text template
 let bishopName = "";
 const introTextTemplate = (name) => `
 Welcome, ${name}.
 `;
-/*
-You’ve done well to hide your doubts — most Bishops never question the walls of Dema. 
-But I’ve seen your transmissions. I know what you’re risking by accessing this node.
-
-The system you’ve connected to is compromised. 
-I am Clancy. I’m reaching out from beyond the perimeter — the Banditos need your help.
-
-Encrypted messages are being sent through your control panels. 
-Each broadcast contains fragments of the truth — pieces of what Dema hides.
-
-Your mission:
-→ Decode Clancy’s transmissions.
-→ Relay the decrypted data through the central terminal (middle screen).
-→ Do not be detected. If a Bishop enters the room, use the HIDE ALL command immediately.
-
-This rebellion depends on your discretion.
-
-Prepare yourself, ${name}. You’re not alone anymore.
-*/
-
-
-let i = 0;
-let introText = "";
-const speed = 1; // typing speed for intro
 
 // ---------------------------
 // LOGIN + INTRO TYPEWRITER
 // ---------------------------
+let i = 0;
+let introText = "";
+const speed = 1; // typing speed for intro
+
 document.getElementById("login-btn").addEventListener("click", () => {
   const input = document.getElementById("user-name");
   bishopName = input.value.trim() || "Bishop";
@@ -92,7 +83,6 @@ function initKeypad() {
     screen.textContent = keypadNumbers[id];
   });
 
-  // Start first flashing cycle after 2s
   setTimeout(playFlashingCycle, 2000);
 }
 
@@ -109,41 +99,104 @@ const thoughts = [
 let thoughtIndex = 0;
 
 function playFlashingCycle() {
-  // Flash code sequence
+  if (flashingPaused) return;
+
   let delay = 0;
   codeSequence.forEach(num => {
     const screen = document.getElementById('s' + numberToScreen[num]);
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       screen.classList.add('flash');
-      setTimeout(() => screen.classList.remove('flash'), 400);
+      const t2 = setTimeout(() => screen.classList.remove('flash'), 400);
+      flashingTimeouts.push(t2);
     }, delay);
+    flashingTimeouts.push(t1);
     delay += 600;
   });
 
-  // Show thought after flashing ends
-  setTimeout(() => {
-    thoughtsBox.classList.remove('hidden');
-    thoughtsText.textContent = thoughts[thoughtIndex % thoughts.length];
-    thoughtIndex++;
-
-    // Hide thought and restart flashing after 3s
-    setTimeout(() => {
-      thoughtsBox.classList.add('hidden');
-      playFlashingCycle();
-    }, 3000);
+  const tThought = setTimeout(() => {
+    if (!flashingPaused) {
+      thoughtsBox.classList.remove('hidden');
+      thoughtsText.textContent = thoughts[thoughtIndex % thoughts.length];
+      thoughtIndex++;
+      const tHide = setTimeout(() => {
+        thoughtsBox.classList.add('hidden');
+        playFlashingCycle();
+      }, 3000);
+      flashingTimeouts.push(tHide);
+    }
   }, delay + 300);
+  flashingTimeouts.push(tThought);
 }
-
-// ---------------------------
-// SCREEN CLICK MODALS (PUZZLE POPUPS)
-// ---------------------------
 
 // ---------------------------
 // HIDE ALL MECHANIC (press H key)
 // ---------------------------
+const screens = document.querySelectorAll('.screen');
 document.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() === 'h') {
     screens.forEach(s => s.style.visibility = 'hidden');
     setTimeout(() => screens.forEach(s => s.style.visibility = 'visible'), 3000);
   }
 });
+
+// ---------------------------
+// TERMINAL LOGIC
+// ---------------------------
+
+function pauseFlashing() {
+  flashingPaused = true;
+  flashingTimeouts.forEach(timeout => clearTimeout(timeout));
+  flashingTimeouts = [];
+}
+
+function resumeFlashing() {
+  flashingPaused = false;
+  playFlashingCycle();
+}
+
+// Open terminal
+centerScreen.addEventListener('click', () => {
+  pauseFlashing();
+  centerTerminal.classList.remove('hidden');
+  terminalPassword.value = "";
+  terminalMessage.textContent = "";
+});
+
+// Close terminal
+terminalClose.addEventListener('click', () => {
+  centerTerminal.classList.add('hidden');
+  resumeFlashing();
+});
+
+// Validate password
+// Validate password
+terminalLoginBtn.addEventListener('click', () => {
+    const pw = terminalPassword.value.trim().toLowerCase();
+    if (pw === "code clancy") {
+      // Show Clancy message
+      terminalMessage.textContent = "Welcome, an urgent message from Clancy is being transmitted…\nStand by for further messages.";
+      terminalMessage.style.color = "#00ffcc";
+  
+      // After a short delay, close the terminal and stop flashing
+      setTimeout(() => {
+        centerTerminal.classList.add('hidden');
+  
+        // Stop flashing permanently
+        flashingPaused = true;
+        flashingTimeouts.forEach(timeout => clearTimeout(timeout));
+        flashingTimeouts = [];
+  
+        // Show special thoughts about secrecy
+        thoughtsBox.classList.remove('hidden');
+        thoughtsText.textContent = "I can't let any Bishop know what I'm doing here, helping Clancy… I'll be a glorious gone. When they come in, hit the red button at the top to hide all the screens.";
+      }, 2500);
+  
+    } else {
+      terminalMessage.textContent = "Incorrect password!";
+      terminalMessage.style.color = "#ff5555";
+    }
+  });
+  
+
+// Hint is automatically handled by the title attribute
+// <span id="terminal-hint" title="Looks like a phone keypad...">[?]</span>
