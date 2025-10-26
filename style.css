@@ -16,7 +16,7 @@ body {
     height: 100%;
   }
   
-  .screen {
+  .screen, .item {
     position: absolute;
     cursor: pointer;
     border: 1px solid transparent;
@@ -48,6 +48,13 @@ body {
     #s14 { top: 66%; left: 76%; width: 7%; height: 9%; }
     #s15 { top: 68%; left: 85%; width: 8%; height: 10%; }
     #s16 { top: 70%; left: 95%; width: 5%; height: 11%; }
+
+/* objects border: 1px solid #00ffff55; */
+    #dragon { top: 4%; left: 40%; width: 4%; height: 4%; }
+    #mug { top: 35%; left: 77%; width: 6%; height: 8%; }
+    #book { top: 83%; left: 37%; width: 10%; height: 12%; }
+    #sai { top: 66%; left: 52%; width: 10%; height: 13%; }
+    #lavalamp { top: 0%; left: 3%; width: 7%; height: 23%; }
 
 #button { top: 15%; left: 85%; width: 3%; height: 5%; }
 #button.flash-red {
@@ -464,5 +471,55 @@ body {
       @keyframes fadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
+      }
+
+/* object interation */
+      .item-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(10, 10, 10, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      
+      .item-popup {
+        position: relative;
+        background: #111;
+        border: 2px solid #444;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        color: #0f0;
+        font-family: monospace;
+        max-width: 400px;
+        box-shadow: 0 0 20px #000;
+      }
+      
+      .item-image {
+        width: 200px;
+        height: auto;
+        border: 1px solid #333;
+        margin-bottom: 10px;
+      }
+      
+      .item-thought {
+        font-size: 0.9rem;
+        color: #0f0;
+      }
+      
+      .close-item {
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #f00;
+        font-size: 1.5rem;
+        cursor: pointer;
       }
       

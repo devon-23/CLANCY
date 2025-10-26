@@ -10,6 +10,7 @@
   <div id="controlRoom">
     <img src="assets/control-room.png" alt="Dema Control Room" id="room-bg" />
 
+    
     <!-- Clickable screens -->
     <div class="screen" id="screen1" data-target="puzzle1"></div>
     <div class="screen" id="screen2" data-target="puzzle2"></div>
@@ -32,6 +33,14 @@
         <div class="screen" id="s16"></div>
         <div class="screen" id="s17"></div>
     </div>
+
+    <!-- clickable items -->
+    <div class="item" id="dragon"></div>
+    <div class="item" id="sai"></div>
+    <div class="item" id="book"></div>
+    <div class="item" id="mug"></div>
+    <div class="item" id="lavalamp"></div>
+
     <div class="screen" id="button"></div>
     <!-- Intro Terminal Overlay -->
     <div id="intro-screen">
@@ -43,7 +52,7 @@
             <input type="text" id="user-name" placeholder="Enter name..." autocomplete="off">
             <button id="login-btn">Authenticate</button>
         </div>
-    
+
         <!-- Step 2: Typewriter Intro -->
         <pre id="intro-text" class="hidden"></pre>
         <button id="begin-btn" class="hidden">Click Here to Begin</button>
@@ -63,18 +72,19 @@
       </div>
      
       <div id="phase2-terminal" class="hidden">
-        <div class="terminal phase2-window">
-          <button id="phase2-terminal-close" class="terminal-x">X</button>
-          <pre id="terminal-output"></pre>
+        <div class="terminal">
+            <div class="terminal phase2-window">
+            <button id="phase2-terminal-close" class="terminal-x">X</button>
+            <pre id="terminal-output"></pre>
+            </div>
         </div>
       </div>
       
-
     <div id="thoughts-box" class="hidden">
         <p id="thoughts-text"></p>
       </div>
         
-    
+     
   </div>
   
   <script src="script.js"></script>

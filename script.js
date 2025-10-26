@@ -46,7 +46,7 @@ const phase2Output = document.getElementById('terminal-output');
 const phase2Close = document.getElementById('phase2-terminal-close');
 
 //compass lies code
-let screen3Unlocked = false; //testing purposs
+let screen3Unlocked = true; //testing purposs
 let screen3Connected = false;
 let screen3Flashing = false;
 
@@ -71,7 +71,8 @@ let flashingTimeouts = []; // track all timeouts to pause/resume
 
 // Intro text template
 let bishopName = "";
-const introTextTemplate = (name) => `
+const introTextTemplate = (name) => `Welcome, ${name}.`;
+/* testing purposes
 Welcome, ${name}.
 
 You’ve done well to hide your doubts — most Bishops never question the walls of Dema. 
@@ -92,7 +93,7 @@ This rebellion depends on your discretion.
 
 Prepare yourself, ${name}. You’re not alone anymore.
 `;
-
+*/
 // ---------------------------
 // LOGIN + INTRO TYPEWRITER
 // ---------------------------
@@ -311,7 +312,7 @@ function startFirstMessage() {
   screen3.classList.add('incoming-flash');
   screen3Flashing = true;
   screen3Unlocked = true;
-  triggerBishop();
+  // triggerBishop(); // testing purposes
 }
 
 function generateBanditoName(name) {
@@ -565,7 +566,7 @@ function triggerBishop() {
           bishopListener = null;
         }
       }
-    }, 3000);
+    }, 5000);
 
     // Add a one-time click listener to the hide button for this bishop event
     bishopListener = () => {
@@ -652,4 +653,85 @@ function startLoseSequence() {
       location.reload(); // refresh and restart game
     });
   }
+  
+ // ======================
+// INTERACTIVE ITEM LOGIC
+// ======================
+
+let itemThoughts = {
+    dragon: [
+      "Cool dragon.",
+      "His name is Trash.",
+      "I wonder where he came from...",
+      "Feels like he’s watching me."
+    ],
+    book: [
+      "An old, dusty book.",
+      "The pages are torn.",
+      "There’s a note scribbled in the margin...",
+      "Why does this feel familiar?"
+    ],
+    sai: [
+      "Sharp. Better not mess with this.",
+      "Looks well-used.",
+      "Maybe it belonged to someone important.",
+      "It hums faintly... or is that my imagination?"
+    ],
+    mug: [
+      "Just a mug.",
+      "Cold coffee stains the rim.",
+      "There’s something scratched underneath...",
+      "Maybe I should wash it... or not."
+    ],
+    lavalamp: [
+      "A lava lamp. Still glowing.",
+      "The wax moves hypnotically.",
+      "Almost looks like it’s forming letters...",
+      "Can it see me too?"
+    ]
+  };
+  
+  // Track click counts to cycle through different thoughts
+  let itemClickCounts = {};
+  
+  // Reusable function to set up interactive items
+  function setupInteractiveItem(itemId, imagePath) {
+    const item = document.getElementById(itemId);
+    if (!item) return;
+  
+    item.style.cursor = "pointer";
+  
+    item.addEventListener("click", () => {
+      const count = itemClickCounts[itemId] || 0;
+      const thoughts = itemThoughts[itemId] || ["..."];
+      const thoughtText = thoughts[count % thoughts.length];
+  
+      // Create popup overlay
+      const overlay = document.createElement("div");
+      overlay.classList.add("item-overlay");
+      overlay.innerHTML = `
+        <div class="item-popup">
+          <img src="${imagePath}" alt="${itemId}" class="item-image" />
+          <div class="item-thought">${thoughtText}</div>
+          <button class="close-item">×</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+  
+      overlay.querySelector(".close-item").addEventListener("click", () => {
+        overlay.remove();
+      });
+  
+      itemClickCounts[itemId] = count + 1;
+    });
+  }
+  
+  // Initialize all items once DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    setupInteractiveItem("dragon", "assets/dragon.png");
+    setupInteractiveItem("book", "assets/book.png");
+    setupInteractiveItem("sai", "assets/sai.png");
+    setupInteractiveItem("mug", "assets/mug.png");
+    setupInteractiveItem("lavalamp", "assets/lavalamp.png");
+  });
   
