@@ -484,14 +484,30 @@ function openPhase3Terminal(banditoName) {
       const answer = normalizeAnswer(raw);
       if (!answer) return;
 
-      output.textContent += `dmaorg.info> ${raw}\n`;
+      output.textContent += `${bishopName}> ${raw}\n`;
       input.value = "";
 
       const correct = "the compass lies";
       if (answer === correct) {
         setTimeout(() => {
-          output.textContent += `> Transmission received.\n> Clancy: You solved it — the compass lies. Good work, Bandito ${banditoName}.\n> Proceed to the next transmission...\n`;
-          //to do disable that screen
+          output.textContent += `> Transmission received.\n> Clancy: You solved it — the compass lies. Good work, Bandito ${banditoName}.\n> decoding full letter...\n> uploading to dmaorg.info/found/15398642_14/clancy.html...\n> upload complete. entire decrypted letter:\n> Banditos,
+    The Bishops don’t want you to find your way out of the city walls.  
+    They built their maps on deceit, twisted the stars, rewired the directions.  
+    Every path they mark leads back to them.
+
+    You must change your compass.
+
+    From now on, east is up.  
+    What was north is now behind you.  
+    Don’t trust what the needle says — trust what *you* feel pulling you forward.
+
+    There’s something waiting beyond the barriers,  
+    something they don’t want you to see.  
+    Keep moving. Keep questioning. Keep listening.
+
+    We’re almost there.
+
+    ~ Clancy\n`;
           screen3Unlocked = false;
         }, 700);
       } else {
@@ -589,7 +605,6 @@ function triggerBishop() {
   }, delay);
 }
 
-// Optional helper to cancel a pending bishop (if you need it elsewhere)
 function cancelBishop() {
   if (bishopTimer) clearTimeout(bishopTimer);
   if (bishopResponseTimeout) clearTimeout(bishopResponseTimeout);
@@ -603,135 +618,141 @@ function cancelBishop() {
 }
 
 // ---------- You Lose Sequence ----------
-function startLoseSequence() {
-    cancelBishop(); // stop any other bishop timers
-    pauseFlashing();
-    // to do make everything on screen disabled, no clicking, maybe dim background
-    const dialogue = [
-      { speaker: "Nico", text: "What are you doing?!" },
-      { speaker: "You", text: "Uh… nothing!" },
-      { speaker: "Nico", text: "Don't lie to me, Bandito. I’ve seen enough." },
-      { speaker: "You", text: "Wait—Nico, please—" },
-      { speaker: "Nico", text: "You’re done. The Bishops were right about you." },
-      { speaker: "System", text: "*signal lost...*" }
-    ];
-  
-    let index = 0;
-  
-    function showNextLine() {
-      if (index >= dialogue.length) {
-        // Dialogue done — show YOU LOSE screen
-        showLoseOverlay();
-        return;
-      }
-  
-      const line = dialogue[index];
-      showThought(`${line.speaker}: ${line.text}`, true);
-      index++;
-  
-      setTimeout(showNextLine, 2500); // delay between dialogue lines
+    function startLoseSequence() {
+        cancelBishop(); // stop any other bishop timers
+        pauseFlashing();
+        // to do make everything on screen disabled, no clicking, maybe dim background
+        const dialogue = [
+        { speaker: "Nico", text: "What are you doing?!" },
+        { speaker: "You", text: "Uh… nothing!" },
+        { speaker: "Nico", text: "Don't lie to me, Bandito. I’ve seen enough." },
+        { speaker: "You", text: "Wait—Nico, please—" },
+        { speaker: "Nico", text: "You’re done. The Bishops were right about you." },
+        { speaker: "System", text: "*signal lost...*" }
+        ];
+    
+        let index = 0;
+    
+        function showNextLine() {
+        if (index >= dialogue.length) {
+            // Dialogue done — show YOU LOSE screen
+            showLoseOverlay();
+            return;
+        }
+    
+        const line = dialogue[index];
+        showThought(`${line.speaker}: ${line.text}`, true);
+        index++;
+    
+        setTimeout(showNextLine, 2500); // delay between dialogue lines
+        }
+    
+        showNextLine();
     }
-  
-    showNextLine();
-  }
-  
-  function showLoseOverlay() {
-    const overlay = document.createElement("div");
-    overlay.className = "lose-overlay";
-    overlay.innerHTML = `
-      <div class="lose-box">
-        <h1>YOU LOSE</h1>
-        <p>The Bishops have caught you.</p>
-        <p>Try again?</p>
-        <button id="retry-btn">always</button>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-  
-    const retry = overlay.querySelector("#retry-btn");
-    retry.addEventListener("click", () => {
-      location.reload(); // refresh and restart game
-    });
-  }
+    
+    function showLoseOverlay() {
+        const overlay = document.createElement("div");
+        overlay.className = "lose-overlay";
+        overlay.innerHTML = `
+        <div class="lose-box">
+            <h1>YOU LOSE</h1>
+            <p>The Bishops have caught you.</p>
+            <p>Try again?</p>
+            <button id="retry-btn">always</button>
+        </div>
+        `;
+        document.body.appendChild(overlay);
+    
+        const retry = overlay.querySelector("#retry-btn");
+        retry.addEventListener("click", () => {
+        location.reload(); // refresh and restart game
+        });
+    }
   
  // ======================
 // INTERACTIVE ITEM LOGIC
 // ======================
 
-let itemThoughts = {
-    dragon: [
-      "Cool dragon.",
-      "His name is Trash.",
-      "I wonder where he came from...",
-      "Feels like he’s watching me."
-    ],
-    book: [
-      "An old, dusty book.",
-      "The pages are torn.",
-      "There’s a note scribbled in the margin...",
-      "Why does this feel familiar?"
-    ],
-    sai: [
-      "Sharp. Better not mess with this.",
-      "Looks well-used.",
-      "Maybe it belonged to someone important.",
-      "It hums faintly... or is that my imagination?"
-    ],
-    mug: [
-      "Just a mug.",
-      "Cold coffee stains the rim.",
-      "There’s something scratched underneath...",
-      "Maybe I should wash it... or not."
-    ],
-    lavalamp: [
-      "A lava lamp. Still glowing.",
-      "The wax moves hypnotically.",
-      "Almost looks like it’s forming letters...",
-      "Can it see me too?"
-    ]
-  };
-  
-  // Track click counts to cycle through different thoughts
-  let itemClickCounts = {};
-  
-  // Reusable function to set up interactive items
-  function setupInteractiveItem(itemId, imagePath) {
-    const item = document.getElementById(itemId);
-    if (!item) return;
-  
-    item.style.cursor = "pointer";
-  
-    item.addEventListener("click", () => {
-      const count = itemClickCounts[itemId] || 0;
-      const thoughts = itemThoughts[itemId] || ["..."];
-      const thoughtText = thoughts[count % thoughts.length];
-  
-      // Create popup overlay
-      const overlay = document.createElement("div");
-      overlay.classList.add("item-overlay");
-      overlay.innerHTML = `
-        <div class="item-popup">
-          <img src="${imagePath}" alt="${itemId}" class="item-image" />
-          <div class="item-thought">${thoughtText}</div>
-          <button class="close-item">×</button>
-        </div>
-      `;
-      document.body.appendChild(overlay);
-  
-      overlay.querySelector(".close-item").addEventListener("click", () => {
-        overlay.remove();
-      });
-  
-      itemClickCounts[itemId] = count + 1;
+    let itemThoughts = {
+        dragon: [
+        "Cool dragon.",
+        "His name is Trash.",
+        "I wonder where he came from...",
+        "Feels like he’s watching me.",
+        "I feel inspired by him.",
+        "Clancy would always say he helped write the album."
+        ],
+        book: [
+        "Ah yes, the guide book of Vialism.",
+        "A bunch of propaganda.",
+        "I shouldn't let the bishops hear me say that...",
+        "Can't believe I used to think this was for the greater good...",
+        "I don't even want to hold it..."
+        ],
+        sai: [
+        "Scaled and Icy, wonderful album Clancy created.",
+        "I remember watching him write the lyrics.",
+        "My favorite is Mullberry Street.",
+        "Most of the bishops think 'Scaled and Icy' means 'Scaled back and Isolated'... but clancy told me otherwise.",
+        "There's a hidden anagram in the title. It was the first message I solved for the banditos."
+        ],
+        mug: [
+        "Just a mug.",
+        "The bishops are only allowed to drink black coffee.",
+        "Such an optomistic message for a dull city...",
+        "Maybe I should wash it... or not.",
+        "We are not allowed to bring this mug home, it's too colorful.",
+        "I'm finally starting to see yellow again."
+        ],
+        lavalamp: [
+        "A lava lamp. Still glowing.",
+        "The wax moves hypnotically.",
+        "Almost looks like it’s forming letters...",
+        "Can it see me too?"
+        ]
+    };
+    
+    // Track click counts to cycle through different thoughts
+    let itemClickCounts = {};
+    
+    // Reusable function to set up interactive items
+    function setupInteractiveItem(itemId, imagePath) {
+        const item = document.getElementById(itemId);
+        if (!item) return;
+    
+        item.style.cursor = "pointer";
+    
+        item.addEventListener("click", () => {
+        const count = itemClickCounts[itemId] || 0;
+        const thoughts = itemThoughts[itemId] || ["..."];
+        const thoughtText = thoughts[count % thoughts.length];
+    
+        // Create popup overlay
+        const overlay = document.createElement("div");
+        overlay.classList.add("item-overlay");
+        overlay.innerHTML = `
+            <div class="item-popup">
+            <img src="${imagePath}" alt="${itemId}" class="item-image" />
+            <div class="item-thought">${thoughtText}</div>
+            <button class="close-item">×</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    
+        overlay.querySelector(".close-item").addEventListener("click", () => {
+            overlay.remove();
+        });
+    
+        itemClickCounts[itemId] = count + 1;
+        });
+    }
+    
+    // Initialize all items once DOM is ready
+    document.addEventListener("DOMContentLoaded", () => {
+        setupInteractiveItem("dragon", "assets/dragon.png");
+        setupInteractiveItem("book", "assets/book.png");
+        setupInteractiveItem("sai", "assets/sai.png");
+        setupInteractiveItem("mug", "assets/mug.png");
+        setupInteractiveItem("lavalamp", "assets/lavalamp.png");
     });
-  }
-  
-  // Initialize all items once DOM is ready
-  document.addEventListener("DOMContentLoaded", () => {
-    setupInteractiveItem("dragon", "assets/dragon.png");
-    setupInteractiveItem("book", "assets/book.png");
-    setupInteractiveItem("sai", "assets/sai.png");
-    setupInteractiveItem("mug", "assets/mug.png");
-    setupInteractiveItem("lavalamp", "assets/lavalamp.png");
-  });
   
