@@ -20,11 +20,11 @@ const numberToScreen = {
   7: 14, 8: 15, 9: 16
 };
 
-const phaseTwoThoughts = [
-  "Now I'm connected to Clancy's transmission directly...",
-  "Each of these screens will flash when an incoming encrypted message is sent.",
-  "When you solve it, go back to the center screen.",
-  "Beware of Nico - when you hear footsteps hit the red button in the top right to hide the screens.",
+const phaseTwoThoughts = [ // for testing
+  //"Now I'm connected to Clancy's transmission directly...",
+  //"Each of these screens will flash when an incoming encrypted message is sent.",
+ // "When you solve it, go back to the center screen.",
+ //"Beware of Nico - when you hear footsteps hit the red button in the top right to hide the screens.",
   "Let's wait for the first message..."
 ];
 
@@ -53,6 +53,8 @@ let screen3Flashing = false;
 let phase3Unlocked = false;
 let phase3Active = false;
 let currentBanditoName = "";
+
+let phase4Active = false; //testing purposes
 
 // References to all screens
 const allScreens = [
@@ -243,7 +245,7 @@ terminalLoginBtn.addEventListener('click', () => {
       flashingTimeouts = [];
 
       thoughtsBox.classList.remove('hidden');
-      thoughtsText.textContent = "I can't let any Bishop know what I'm doing here, helping Clancy… I'll be a glorious gone.";
+      //thoughtsText.textContent = "I can't let any Bishop know what I'm doing here, helping Clancy… I'll be a glorious gone.";
 
       hideButton.classList.add('flash-red');
       setTimeout(() => {
@@ -509,6 +511,12 @@ function openPhase3Terminal(banditoName) {
 
     ~ Clancy\n`;
           screen3Unlocked = false;
+          //to do, not allow 'the compass lies' to be an answer anymore
+          // to do function() to trigger next phase, screen 5 flash etc
+          setTimeout(() => {
+            //overlay.remove();
+            startPhaseFour();
+          }, 2000);
         }, 700);
       } else {
         setTimeout(() => {
@@ -755,4 +763,73 @@ function cancelBishop() {
         setupInteractiveItem("mug", "assets/mug.png");
         setupInteractiveItem("lavalamp", "assets/lavalamp.png");
     });
+
+  function startPhaseFour() {
+    phase4Active = true;
+    const screen5 = document.getElementById('screen5');
+    if (!screen5) return;
   
+    // Flash red to signal new phase
+    screen5.classList.add('incoming-flash');
+    screen5Flashing = true;
+  
+    screen5.addEventListener('click', () => {
+      if (!screen5Flashing) return;
+      screen5.classList.remove('incoming-flash');
+      screen5Flashing = false;
+      openPhase4Terminal(currentBanditoName);
+    }, { once: true });
+  }
+  
+  function openPhase4Terminal(banditoName) {
+    phase4Active = true;
+  
+    const overlay = document.createElement('div');
+    overlay.className = 'terminal-overlay';
+    overlay.innerHTML = `
+      <div class="terminal phase3">
+        <button id="phase3-close" style="position:absolute; top:5px; right:10px;">X</button>
+        <pre id="phase3-output"></pre>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  
+    const output = overlay.querySelector('#phase3-output');
+    const input = overlay.querySelector('#phase3-input');
+    const close = overlay.querySelector('#phase3-close');
+  
+    output.textContent = `clancy> Good work, Bandito ${banditoName}\n`;
+    setTimeout(() => {
+      output.textContent += `clancy> the citizens are moving east, back towards the city walls\n\n`;
+      output.textContent += `clancy> here's your next message...\n`;
+      output.textContent += `${currentBanditoName},
+
+      You’ve moved through the fog unseen before, but the air grows heavier now.
+    
+      They see when you arrive.
+    
+      Eyes in the sky that do not blink, lenses dressed in feathers of black.
+      The watchers linger where light fades — above walls, on rusted wire, near the city’s edge.
+      They feed not on flesh, but on what remains after.
+    
+      Surveillance is outside.
+      The creature that watches you is the answer.
+    
+      Be careful what looks down upon you.
+    
+      Always,
+
+      - Clancy\n`;
+      input.focus();
+    }, 700);
+  
+    close.addEventListener('click', () => {
+      overlay.remove();
+      //phase4Active = false;
+    });
+  }
+  
+  screen5.addEventListener('click', () => {
+    if (!phase4Active) return;
+    startPhaseFour()
+  })
