@@ -54,7 +54,7 @@ let phase3Unlocked = false;
 let phase3Active = false;
 let currentBanditoName = "";
 
-let phase4Active = false; //testing purposes
+let phase4Active = true; //testing purposes
 
 // References to all screens
 const allScreens = [
@@ -337,7 +337,7 @@ function typePhase2Text(text, speed = 40, callback) {
 }
 
 // ---------------------------
-// SCREEN 3 CLICK: PHASE 2 LETTER
+// SCREEN 3 CLICK: PHASE 2 LETTER --> center answer terminal
 // ---------------------------
 const screen3 = document.getElementById('screen3');
 screen3.addEventListener('click', () => {
@@ -448,7 +448,7 @@ phase2Close.addEventListener('click', () => {
 });
 
 // ---------------------------
-// PHASE 3 TERMINAL
+// PHASE 3 TERMINAL answer terminal --->
 // ---------------------------
 function openPhase3Terminal(banditoName) {
   phase3Active = true;
@@ -516,6 +516,34 @@ function openPhase3Terminal(banditoName) {
           setTimeout(() => {
             //overlay.remove();
             startPhaseFour();
+          }, 2000);
+        }, 700);
+      } else if (answer == "vulture" || answer == "vultures") {
+        setTimeout(() => {
+          output.textContent += `> Transmission received.\n> Clancy: You solved it — the vultures are circling inside the city. Good work, Bandito ${banditoName}. The rest of the Banditos will now know how the Bishops are watching them. You taught them to stay out of the watchful eyes of the vultures.\n> decoding full letter...\n> uploading to dmaorg.info/found/15398642_14/clancy.html...\n> upload complete. entire decrypted letter:\n> Banditos,
+  I’ve learned how they see us. The Bishops didn’t build Dema alone
+  — they grew eyes for it.\n
+  They hover in silence, watching for those who stray too close to the walls. 
+  Their gaze feeds the Nine.
+  Their sight feeds the city. Every movement you make, 
+  every path you trace through the dust, is seen before you even take it.
+  Stay low. Move only when the sky is blind.
+  The Vultures roost atop the tallest towers and along the edges of Dema’s veins.
+  Their purpose isn’t to protect — it’s to report.
+  They’ve seen our attempts before, but this time, we’ll move like shadows.
+  Change your routes. Disrupt their sightlines.
+  When they can’t see us, they can’t stop us.
+
+  Always,
+  
+  Clancy
+          \n`;
+          phase4Active = false;
+          //to do, not allow 'the compass lies' to be an answer anymore
+          // to do function() to trigger next phase, screen 5 flash etc
+          setTimeout(() => {
+            //overlay.remove();
+            startPhaseFive();
           }, 2000);
         }, 700);
       } else {
@@ -688,6 +716,7 @@ function cancelBishop() {
         "I wonder where he came from...",
         "Feels like he’s watching me.",
         "I feel inspired by him.",
+        "He has a best friend named Clifford.",
         "Clancy would always say he helped write the album."
         ],
         book: [
@@ -801,25 +830,24 @@ function cancelBishop() {
     output.textContent = `clancy> Good work, Bandito ${banditoName}\n`;
     setTimeout(() => {
       output.textContent += `clancy> the citizens are moving east, back towards the city walls\n\n`;
-      output.textContent += `clancy> here's your next message...\n`;
+      output.textContent += `clancy> here's your next encrypted message...\n`;
       output.textContent += `${currentBanditoName},
 
-      You’ve moved through the fog unseen before, but the air grows heavier now.
-    
-      They see when you arrive.
-    
-      Eyes in the sky that do not blink, lenses dressed in feathers of black.
-      The watchers linger where light fades — above walls, on rusted wire, near the city’s edge.
-      They feed not on flesh, but on what remains after.
-    
-      Surveillance is outside.
-      The creature that watches you is the answer.
-    
-      Be careful what looks down upon you.
-    
-      Always,
+          You’ve moved through the fog unseen before, but the air grows heavier now.
+        
+          They see when you arrive.
+        
+          Eyes in the sky that do not blink, lenses dressed in feathers of black.
+          The watchers linger where light fades — above walls, on rusted wire, near the city’s edge.
+        
+          Surveillance is outside.
+          The creature that watches you is the answer.
+        
+          Be careful what looks down upon you.
+        
+          Always,
 
-      - Clancy\n`;
+          - Clancy\n`;
       input.focus();
     }, 700);
   
