@@ -21,10 +21,10 @@ const numberToScreen = {
 };
 
 const phaseTwoThoughts = [ // for testing
-  //"Now I'm connected to Clancy's transmission directly...",
-  //"Each of these screens will flash when an incoming encrypted message is sent.",
- // "When you solve it, go back to the center screen.",
- //"Beware of Nico - when you hear footsteps hit the red button in the top right to hide the screens.",
+  "Now I'm connected to Clancy's transmission directly...",
+  "Each of these screens will flash when an incoming encrypted message is sent.",
+  "When you solve it, go back to the center screen.",
+ "Beware of Nico - when you hear footsteps hit the red button in the top right to hide the screens.",
   "Let's wait for the first message..."
 ];
 
@@ -46,7 +46,7 @@ const phase2Output = document.getElementById('terminal-output');
 const phase2Close = document.getElementById('phase2-terminal-close');
 
 //compass lies code
-let screen3Unlocked = true; //testing purposs
+let screen3Unlocked = false; //testing purposs
 let screen3Connected = false;
 let screen3Flashing = false;
 
@@ -54,7 +54,7 @@ let phase3Unlocked = false;
 let phase3Active = false;
 let currentBanditoName = "";
 
-let phase4Active = true; //testing purposes
+let phase4Active = false; //testing purposes
 
 // References to all screens
 const allScreens = [
@@ -73,9 +73,9 @@ let flashingTimeouts = []; // track all timeouts to pause/resume
 
 // Intro text template
 let bishopName = "";
-const introTextTemplate = (name) => `Welcome, ${name}.`;
-/* testing purposes
-Welcome, ${name}.
+const introTextTemplate = (name) => //`Welcome, ${name}.`;
+/* testing purposes */
+`Welcome, ${name}.
 
 You’ve done well to hide your doubts — most Bishops never question the walls of Dema. 
 But I’ve seen your transmissions. I know what you’re risking by accessing this node.
@@ -95,7 +95,7 @@ This rebellion depends on your discretion.
 
 Prepare yourself, ${name}. You’re not alone anymore.
 `;
-*/
+
 // ---------------------------
 // LOGIN + INTRO TYPEWRITER
 // ---------------------------
@@ -314,11 +314,11 @@ function startFirstMessage() {
   screen3.classList.add('incoming-flash');
   screen3Flashing = true;
   screen3Unlocked = true;
-  // triggerBishop(); // testing purposes
+   triggerBishop(); // testing purposes
 }
 
 function generateBanditoName(name) {
-  const suffixes = ['Shadow', 'Fox', 'Blade', 'Rogue', 'Echo'];
+  const suffixes = ['Ned', 'Sai', 'Blade', 'Rogue', 'Echo'];
   const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
   return name.split('').sort(() => Math.random() - 0.5).join('') + ' ' + randomSuffix;
 }
@@ -337,21 +337,37 @@ function typePhase2Text(text, speed = 40, callback) {
 }
 
 // ---------------------------
-// SCREEN 3 CLICK: PHASE 2 LETTER --> center answer terminal
+// SCREEN 3 CLICK: PHASE 2 LETTER --> first puzzle , 
+// ---------------------------
+// ---------------------------
+// SCREEN 3 CLICK: PHASE 2 LETTER (The Compass Lies)
 // ---------------------------
 const screen3 = document.getElementById('screen3');
 screen3.addEventListener('click', () => {
-    if (!screen3Unlocked) return;
+  if (!screen3Unlocked) return;
   if (screen3Flashing) {
     screen3.classList.remove('incoming-flash');
     screen3Flashing = false;
   }
 
   pauseFlashing();
-  phase2Terminal.classList.remove('hidden');
 
+  // Create overlay terminal (matching Phase 4 aesthetic)
+  const overlay = document.createElement('div');
+  overlay.className = 'terminal-overlay';
+  overlay.innerHTML = `
+    <div class="terminal phase3">
+      <button id="phase2-close" style="position:absolute; top:5px; right:10px;">X</button>
+      <pre id="phase2-output"></pre>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const output = overlay.querySelector('#phase2-output');
+  const close = overlay.querySelector('#phase2-close');
+
+  // Generate bandito name once
   if (!screen3Connected) {
-    // Generate Bandito name once
     currentBanditoName = generateBanditoName(bishopName);
 
     const messages = [
@@ -390,18 +406,29 @@ Always,
       }
     }
 
-    phase2Output.textContent = '';
+    output.textContent = '';
     let msgIndex = 0;
+
+    function typePhase2Text(line, speed, callback) {
+      let i = 0;
+      const interval = setInterval(() => {
+        output.textContent += line[i];
+        i++;
+        if (i >= line.length) {
+          clearInterval(interval);
+          if (callback) callback();
+        }
+      }, speed);
+    }
 
     function nextLine() {
       if (msgIndex >= messages.length) {
-        phase2Output.innerHTML += `<br><br>${htmlLetter}`;
+        output.innerHTML += `<br><br>${htmlLetter}`;
         screen3Connected = true;
-        phase3Unlocked = true; // unlock Phase 3
+        phase3Unlocked = true; // unlock next phase
         return;
       }
-      typePhase2Text(messages[msgIndex], 40, () => {
-        phase2Output.textContent += '\n';
+      typePhase2Text(messages[msgIndex] + '\n', 40, () => {
         msgIndex++;
         setTimeout(nextLine, 500);
       });
@@ -411,7 +438,7 @@ Always,
   } else {
     // Subsequent times: just show letter
     const letter = `
-    ${currentBanditoName},
+${currentBanditoName},
 
 Time tHey come wandering through the shadows, seeking what the night conceals.
 Every trail you follow may hide a secret, but only those who look closely will see.
@@ -422,9 +449,8 @@ Remember: sometimes guidance is not given by stars, but by what is hidden in pla
 Trust this well.
 
 Always,
-
--Clancy
-`;
+- Clancy
+    `;
     const answer = "THE COMPASS LIES";
     let htmlLetter = '';
     let answerIndex = 0;
@@ -437,11 +463,16 @@ Always,
         htmlLetter += char;
       }
     }
-
-    phase2Output.innerHTML = htmlLetter;
+    output.innerHTML = htmlLetter;
   }
+
+  // Close button behavior
+  close.addEventListener('click', () => {
+    overlay.remove();
+  });
 });
 
+///
 
 phase2Close.addEventListener('click', () => {
   phase2Terminal.classList.add('hidden');
@@ -450,7 +481,7 @@ phase2Close.addEventListener('click', () => {
 // ---------------------------
 // PHASE 3 TERMINAL answer terminal --->
 // ---------------------------
-function openPhase3Terminal(banditoName) {
+function openPhase3Terminal(banditoName) { //edit here
   phase3Active = true;
 
   const overlay = document.createElement('div');
@@ -520,24 +551,25 @@ function openPhase3Terminal(banditoName) {
         }, 700);
       } else if (answer == "vulture" || answer == "vultures") {
         setTimeout(() => {
-          output.textContent += `> Transmission received.\n> Clancy: You solved it — the vultures are circling inside the city. Good work, Bandito ${banditoName}. The rest of the Banditos will now know how the Bishops are watching them. You taught them to stay out of the watchful eyes of the vultures.\n> decoding full letter...\n> uploading to dmaorg.info/found/15398642_14/clancy.html...\n> upload complete. entire decrypted letter:\n> Banditos,
-  I’ve learned how they see us. The Bishops didn’t build Dema alone
-  — they grew eyes for it.\n
-  They hover in silence, watching for those who stray too close to the walls. 
-  Their gaze feeds the Nine.
-  Their sight feeds the city. Every movement you make, 
-  every path you trace through the dust, is seen before you even take it.
-  Stay low. Move only when the sky is blind.
-  The Vultures roost atop the tallest towers and along the edges of Dema’s veins.
-  Their purpose isn’t to protect — it’s to report.
-  They’ve seen our attempts before, but this time, we’ll move like shadows.
-  Change your routes. Disrupt their sightlines.
-  When they can’t see us, they can’t stop us.
+          output.textContent += `> Transmission received.\n> Clancy: You solved it — the vultures are circling inside the city. Good work, Bandito ${banditoName}. The rest of the Banditos will now know how the Bishops are watching them. You taught them to stay out of the watchful eyes of the vultures.\n> decoding full letter...\n> uploading to dmaorg.info/found/15398642_14/clancy.html...\n> upload complete. entire decrypted letter:\n> 
+Banditos,
+I’ve learned how they see us. The Bishops didn’t build Dema alone
+— they grew eyes for it.\n
+They hover in silence, watching for those who stray too close to the walls. 
+Their gaze feeds the Nine.
+Their sight feeds the city. Every movement you make, 
+every path you trace through the dust, is seen before you even take it.
+Stay low. Move only when the sky is blind.
+The Vultures roost atop the tallest towers and along the edges of Dema’s veins.
+Their purpose isn’t to protect — it’s to report.
+They’ve seen our attempts before, but this time, we’ll move like shadows.
+Change your routes. Disrupt their sightlines.
+When they can’t see us, they can’t stop us.
 
-  Always,
-  
-  Clancy
-          \n`;
+Always,
+
+Clancy
+\n`;
           phase4Active = false;
           //to do, not allow 'the compass lies' to be an answer anymore
           // to do function() to trigger next phase, screen 5 flash etc
@@ -657,11 +689,15 @@ function cancelBishop() {
     function startLoseSequence() {
         cancelBishop(); // stop any other bishop timers
         pauseFlashing();
+        let screen3Unlocked = false;
+        let phase3Unlocked = false;
+        let centerpuzzle = false;
+
         // to do make everything on screen disabled, no clicking, maybe dim background
         const dialogue = [
         { speaker: "Nico", text: "What are you doing?!" },
         { speaker: "You", text: "Uh… nothing!" },
-        { speaker: "Nico", text: "Don't lie to me, Bandito. I’ve seen enough." },
+        { speaker: "Nico", text: "Don't lie to me, Bishop. I’ve seen enough." },
         { speaker: "You", text: "Wait—Nico, please—" },
         { speaker: "Nico", text: "You’re done. The Bishops were right about you." },
         { speaker: "System", text: "*signal lost...*" }
